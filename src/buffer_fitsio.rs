@@ -103,7 +103,7 @@ impl<P: Pixel, Container: Deref<Target = [P::Subpixel]>> ImageBuffer<P, Containe
         let (width, height) = (self.width(), self.height());
         let numpix = P::CHANNEL_COUNT as usize;
         let imgsize = if numpix == 1 {
-            vec![height as usize, width as usize, numpix]
+            vec![height as usize, width as usize]
         } else {
             vec![height as usize, width as usize, numpix]
         };
