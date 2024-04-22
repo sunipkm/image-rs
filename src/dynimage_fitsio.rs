@@ -6,8 +6,7 @@ use crate::FitsCompression;
 use crate::DynamicImage;
 
 impl DynamicImage {
-    /// Save the image data to a FITS file. The file name
-    /// will be of the form `{file_prefix}_{yyyymmdd}_{hhmmss}.fits`.
+    /// Save the image data to a FITS file.
     ///
     /// ### Note
     /// If compression is enabled, the compressed image data is stored
@@ -20,7 +19,13 @@ impl DynamicImage {
     ///
     /// # Arguments
     ///  * `path` - The path to the FITS file.
-    ///  * `compress` - Whether to compress the FITS file. Compression uses the GZIP algorithm.
+    ///  * `compress` - Whether to compress the FITS file. Compression uses
+    ///    - GZIP,
+    ///    - Rice,
+    ///    - HCOMPRESS,
+    ///    - HCOMPRESS with smoothing,
+    ///    - BZIP2, or
+    ///    - PLIO algorithms.
     ///  * `overwrite` - Whether to overwrite the file if it already exists.
     ///
     /// # Errors
