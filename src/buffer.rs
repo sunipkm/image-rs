@@ -16,11 +16,6 @@ use crate::traits::{EncodableLayout, Pixel, PixelWithColorType};
 use crate::utils::expand_packed;
 use crate::{DynamicImage, ImageMetadata};
 
-#[cfg(feature = "fitsio")]
-mod buffer_fitsio;
-#[cfg(feature = "fitsio")]
-pub use buffer_fitsio::FitsCompression;
-
 /// Iterate over pixel refs.
 pub struct Pixels<'a, P: Pixel + 'a>
 where

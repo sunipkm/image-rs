@@ -144,7 +144,7 @@ pub use metadata::{ExtendedMetadata, ExtendedMetadataRow, ImageMetadata, ImageMe
 pub use roi::ROI;
 
 #[cfg(feature = "fitsio")]
-pub use buffer_::FitsCompression;
+pub use dynimage_fitsio::FitsCompression;
 
 pub use crate::image::{
     AnimationDecoder,
