@@ -24,6 +24,20 @@ pub enum FitsCompression {
     Plio,
 }
 
+impl FitsCompression {
+    fn extension(&self) -> &str {
+        match self {
+            FitsCompression::None => "fits",
+            FitsCompression::Gzip => "fits[compress G]",
+            FitsCompression::Rice => "fits[compress R]",
+            FitsCompression::Hcompress => "fits[compress H]",
+            FitsCompression::Hsmooth => "fits[compress HS]",
+            FitsCompression::Bzip2 => "fits[compress B]",
+            FitsCompression::Plio => "fits[compress P]",
+        }
+    }
+}
+
 impl From<Option<FitsCompression>> for FitsCompression {
     fn from(opt: Option<FitsCompression>) -> Self {
         opt.unwrap_or(FitsCompression::None)
@@ -109,22 +123,12 @@ impl DynamicImage {
             dimensions: &self.image_size(),
         };
 
-        let fmt = match compress {
-            FitsCompression::None => "fits",
-            FitsCompression::Gzip => "fits[compress G]",
-            FitsCompression::Rice => "fits[compress R]",
-            FitsCompression::Hcompress => "fits[compress H]",
-            FitsCompression::Hsmooth => "fits[compress HS]",
-            FitsCompression::Bzip2 => "fits[compress B]",
-            FitsCompression::Plio => "fits[compress P]",
-        };
-
         let mut path = PathBuf::from(path);
-        path.set_extension("fits"); // Default extension
+        path.set_extension((FitsCompression::None).extension()); // Default extension
         if overwrite && path.exists() { // There seems to be a bug in FITSIO, overwrite() the way called here does nothing
             std::fs::remove_file(&path)?;
         }
-        path.set_extension(fmt);
+        path.set_extension(compress.extension());
 
         let mut fptr = FitsFile::create(path.clone());
         if overwrite {
@@ -146,17 +150,17 @@ impl DynamicImage {
         };
 
         match self {
-            ImageLuma8(p) => hdu.write_image(&mut fptr, p.inner_pixels())?,
-            ImageLumaA8(p) => hdu.write_image(&mut fptr, p.inner_pixels())?,
-            ImageRgb8(p) => hdu.write_image(&mut fptr, p.inner_pixels())?,
-            ImageRgba8(p) => hdu.write_image(&mut fptr, p.inner_pixels())?,
-            ImageLuma16(p) => hdu.write_image(&mut fptr, p.inner_pixels())?,
-            ImageLumaA16(p) => hdu.write_image(&mut fptr, p.inner_pixels())?,
-            ImageRgb16(p) => hdu.write_image(&mut fptr, p.inner_pixels())?,
-            ImageRgba16(p) => hdu.write_image(&mut fptr, p.inner_pixels())?,
-            ImageRgb32F(p) => hdu.write_image(&mut fptr, p.inner_pixels())?,
-            ImageRgba32F(p) => hdu.write_image(&mut fptr, p.inner_pixels())?,
-        }
+            ImageLuma8(p) => hdu.write_image(&mut fptr, p.inner_pixels()),
+            ImageLumaA8(p) => hdu.write_image(&mut fptr, p.inner_pixels()),
+            ImageRgb8(p) => hdu.write_image(&mut fptr, p.inner_pixels()),
+            ImageRgba8(p) => hdu.write_image(&mut fptr, p.inner_pixels()),
+            ImageLuma16(p) => hdu.write_image(&mut fptr, p.inner_pixels()),
+            ImageLumaA16(p) => hdu.write_image(&mut fptr, p.inner_pixels()),
+            ImageRgb16(p) => hdu.write_image(&mut fptr, p.inner_pixels()),
+            ImageRgba16(p) => hdu.write_image(&mut fptr, p.inner_pixels()),
+            ImageRgb32F(p) => hdu.write_image(&mut fptr, p.inner_pixels()),
+            ImageRgba32F(p) => hdu.write_image(&mut fptr, p.inner_pixels()),
+        }?;
 
         hdu.write_key(&mut fptr, "CAMERA", cameraname)?;
         hdu.write_key(&mut fptr, "DATE-OBS", timestamp.as_str())?;
